@@ -32,15 +32,18 @@ class Department(val id: String, val head: Employee) {
         employee.department = this
         this.employees.add(employee)
 
-        validate(employee)
+        validate()
 
         notificationService.sendNotification(manager, "You have a new employee: ${employee.id}")
         notificationService.sendNotification(this.head, "A new employee has been assigned to you: ${employee.id}")
     }
 
-    private fun validate(employee: Employee) {
-        if (employee.manager!!.department != this) {
-            throw BusinessException("${employee.manager!!.id} is not in the correct department")
+    private fun validate() {
+        //check that all employees except head have their manager in the department
+        employees.filter{ it != this.head }.forEach {
+            if (it.manager!!.department != this) {
+                throw BusinessException("${it.manager!!.id} is not in the correct department")
+            }
         }
     }
 
