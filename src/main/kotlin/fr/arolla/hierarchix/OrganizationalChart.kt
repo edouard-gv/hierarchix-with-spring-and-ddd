@@ -11,21 +11,41 @@ class OrganizationalChart {
 }
 
 class Department(val id: String, val head: Employee) {
+    val employees: MutableSet<Employee> = mutableSetOf()
+
+    init {
+        if (head.department != null) {
+            throw BusinessException("${head.id} is already assigned to a department")
+        }
+        head.department = this
+        this.employees.add(head)
+
+    }
+
     fun assignEmployee(
         employee: Employee,
         manager: Employee,
         notificationService: NotificationService
     ) {
-        //TODO("Should be implemented in the aggregate validation")
-        if (manager.department != this) {
-            throw BusinessException("${manager.id} is not in the correct department")
-        }
 
         employee.manager = manager
         employee.department = this
+        this.employees.add(employee)
+
+        validate(employee)
 
         notificationService.sendNotification(manager, "You have a new employee: ${employee.id}")
         notificationService.sendNotification(this.head, "A new employee has been assigned to you: ${employee.id}")
+    }
+
+    private fun validate(employee: Employee) {
+        if (employee.manager!!.department != this) {
+            throw BusinessException("${employee.manager!!.id} is not in the correct department")
+        }
+    }
+
+    fun headcount(): Int {
+        return employees.size
     }
 }
 

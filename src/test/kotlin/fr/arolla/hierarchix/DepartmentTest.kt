@@ -19,19 +19,16 @@ class DepartmentTest {
     fun `assignEmployee should assign employee to manager and department`() {
 
         val employee = Employee("John Doe")
-        val manager = Employee("Jane Smith")
         val head = Employee("Mark Newton")
         val department = Department("Engineering", head)
-        head.department = department
-        employee.department = department
-        manager.department = department
 
-        department.assignEmployee(employee, manager, mockNotificationService)
+        department.assignEmployee(employee, head, mockNotificationService)
 
-        assertEquals(manager, employee.manager)
+        assertEquals(head, employee.manager)
         assertEquals(department, employee.department)
+        assertEquals(2, department.headcount())
 
-        verify(mockNotificationService).sendNotification(manager, "You have a new employee: ${employee.id}")
+        verify(mockNotificationService).sendNotification(head, "You have a new employee: ${employee.id}")
         verify(mockNotificationService).sendNotification(department.head, "A new employee has been assigned to you: ${employee.id}")
     }
 
@@ -39,19 +36,33 @@ class DepartmentTest {
     fun `assignEmployee should throw exception when manager is not in the correct department`() {
 
         val researchEmployee = Employee("John Doe")
-        val engineeringManager = Employee("Jane Smith")
         val researchHead = Employee("Bobby Rattle")
         val researchDepartment = Department("Research", researchHead)
         val engineeringHead = Employee("Mark Newton")
         val engineeringDepartment = Department("Engineering", engineeringHead)
 
-        researchEmployee.department = researchDepartment
-        engineeringManager.department = engineeringDepartment
-        researchHead.department = researchDepartment
-        engineeringHead.department = engineeringDepartment
+        assertThrows<BusinessException> {
+            researchDepartment.assignEmployee(researchEmployee, engineeringHead, mockNotificationService)
+        }
+    }
+
+    @Test
+    fun `empty department should at least have one employee head`() {
+        val researchHead = Employee("Bobby Rattle")
+        val researchDepartment = Department("Research", researchHead)
+
+        assertEquals(researchHead, researchDepartment.head)
+        assertEquals(1, researchDepartment.headcount())
+        assertEquals(setOf(researchHead), researchDepartment.employees)
+    }
+
+    @Test
+    fun `you cannot set as head someone of another department`() {
+        val researchEmployee = Employee("John Doe")
+        val researchDepartment = Department("Research", researchEmployee)
 
         assertThrows<BusinessException> {
-            researchDepartment.assignEmployee(researchEmployee, engineeringManager, mockNotificationService)
+            val engineeringDepartment = Department("Engineering", researchEmployee)
         }
     }
 }
