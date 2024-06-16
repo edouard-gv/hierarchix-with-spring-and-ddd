@@ -1,4 +1,4 @@
-package com.example.hierarchix
+package fr.arolla.hierarchix
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

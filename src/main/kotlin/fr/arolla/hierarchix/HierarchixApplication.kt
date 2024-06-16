@@ -1,4 +1,4 @@
-package com.example.hierarchix
+package fr.arolla.hierarchix
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
