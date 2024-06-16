@@ -1,13 +1,8 @@
 package fr.arolla.hierarchix
 
-class OrganizationalChart {
-    fun findEmployee(s: String): Employee {
-        TODO("Not yet implemented")
-    }
-
-    fun findDepartment(departmentId: String): Department {
-        TODO("Not yet implemented")
-    }
+interface OrganizationalChart {
+    fun findEmployee(employeeId: String): Employee
+    fun findDepartment(departmentId: String): Department
 }
 
 class Department(val id: String, val head: Employee) {
@@ -46,7 +41,7 @@ class Department(val id: String, val head: Employee) {
         //check that all employees except head have their manager in the department
         employees.filter{ it != this.head }.forEach {
             if (it.manager!!.department != this) {
-                throw BusinessException("${it.manager!!.id} is not in the correct department")
+                throw BusinessException("${it.manager!!.id} is not in the ${this.id} department")
             }
         }
     }
@@ -59,5 +54,4 @@ class Department(val id: String, val head: Employee) {
 class Employee(val id: String) {
     var department: Department? = null
     var manager: Employee? = null
-
 }
