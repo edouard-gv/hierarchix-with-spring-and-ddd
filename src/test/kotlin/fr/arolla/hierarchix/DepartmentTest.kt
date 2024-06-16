@@ -85,7 +85,7 @@ class DepartmentTest {
     }
 
     @Test
-    fun `you cannot set as head someone of another department`() {
+    fun `you cannot put at the head of a new department someone of another department`() {
         val researchEmployee = Employee("John Doe")
         val researchDepartment = Department("Research", researchEmployee)
 
