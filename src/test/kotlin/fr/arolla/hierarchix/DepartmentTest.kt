@@ -47,6 +47,34 @@ class DepartmentTest {
     }
 
     @Test
+    fun `assignEmployee should be able to change the manager of an employee if in the same department`() {
+        val researchEmployee = Employee("John Doe")
+        val researchHead = Employee("Bobby Rattle")
+        val researchDepartment = Department("Research", researchHead)
+
+        val newManager = Employee("Mark Newton")
+        researchDepartment.assignEmployee(newManager, researchHead, mockNotificationService)
+        researchDepartment.assignEmployee(researchEmployee, newManager, mockNotificationService)
+
+        assertEquals(newManager, researchEmployee.manager)
+    }
+
+    @Test
+    fun `assignEmployee should throw exception when employee is already assigned to another department`() {
+        val researchEmployee = Employee("John Doe")
+        val researchHead = Employee("Bobby Rattle")
+        val researchDepartment = Department("Research", researchHead)
+        val engineeringHead = Employee("Mark Newton")
+        val engineeringDepartment = Department("Engineering", engineeringHead)
+
+        researchDepartment.assignEmployee(researchEmployee, researchHead, mockNotificationService)
+
+        assertThrows<BusinessException> {
+            engineeringDepartment.assignEmployee(researchEmployee, engineeringHead, mockNotificationService)
+        }
+    }
+
+    @Test
     fun `empty department should at least have one employee head`() {
         val researchHead = Employee("Bobby Rattle")
         val researchDepartment = Department("Research", researchHead)

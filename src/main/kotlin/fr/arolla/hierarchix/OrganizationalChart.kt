@@ -28,6 +28,10 @@ class Department(val id: String, val head: Employee) {
         notificationService: NotificationService
     ) {
 
+        if (employee.department != null && employee.department != this) {
+            throw BusinessException("${employee.id} is already assigned to another department")
+        }
+
         employee.manager = manager
         employee.department = this
         this.employees.add(employee)
